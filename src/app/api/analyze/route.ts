@@ -8,12 +8,33 @@ import {
   computeGapAnalysis,
   computeMatchPercentages
 } from "@/lib/extraction";
+import { checkRateLimit, getClientIdentifier, pruneExpiredBuckets } from "@/lib/rateLimit";
 import type { AnalysisResult } from "@/lib/types";
+
+export const maxDuration = 60;
 
 const MAX_JD_CHARS = Number(process.env.MAX_JD_CHARS || 20000);
 const MAX_RESUME_CHARS = Number(process.env.MAX_RESUME_CHARS || 20000);
 
 export async function POST(req: NextRequest) {
+  pruneExpiredBuckets();
+
+  const identifier = getClientIdentifier(req);
+  const rateLimit = checkRateLimit(identifier);
+
+  if (!rateLimit.allowed) {
+    const retryAfterSeconds = Math.ceil((rateLimit.resetAt - Date.now()) / 1000);
+    return NextResponse.json(
+      {
+        error: `Rate limit exceeded. Try again in ${retryAfterSeconds}s. This limit protects shared API costs on the public demo.`
+      },
+      {
+        status: 429,
+        headers: { "Retry-After": String(retryAfterSeconds) }
+      }
+    );
+  }
+
   try {
     const formData = await req.formData();
     const jdUrl = formData.get("jdUrl") as string | null;
@@ -72,7 +93,9 @@ export async function POST(req: NextRequest) {
       ...percentages
     };
 
-    return NextResponse.json(result);
+    return NextResponse.json(result, {
+      headers: { "X-RateLimit-Remaining": String(rateLimit.remaining) }
+    });
   } catch (err: any) {
     console.error("[/api/analyze] error:", err);
     return NextResponse.json(
