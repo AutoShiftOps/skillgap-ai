@@ -13,7 +13,7 @@ export default function UnicornScoreCard({ score }: { score: UnicornScore }) {
   return (
     <div className="card">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="font-semibold text-lg">JD Realism (\"Unicorn\") Score</h3>
+        <h3 className="font-semibold text-lg">JD Realism (&quot;Unicorn&quot;) Score</h3>
         <span className={`badge ${band.color}`}>{band.label}</span>
       </div>
       <div className="flex items-end gap-3 mb-2">
