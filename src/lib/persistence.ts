@@ -1,6 +1,5 @@
-import { createSupabaseServiceClient } from "./supabase/server";
+import { createSupabaseServiceClient } from "./supabase/serviceClient";
 import type { AnalysisResult } from "./types";
-import { randomBytes } from "crypto";
 
 /**
  * Persists a completed analysis (resume + JD + gaps + score) for a signed-in
@@ -76,7 +75,19 @@ export async function getAnalysisHistory(userId: string) {
 }
 
 function generateShareToken(): string {
-  return randomBytes(9).toString("base64url");
+  const bytes = new Uint8Array(9);
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    crypto.getRandomValues(bytes);
+  } else {
+    for (let i = 0; i < bytes.length; i++) {
+      bytes[i] = Math.floor(Math.random() * 256);
+    }
+  }
+  return Buffer.from(bytes)
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
 }
 
 export async function createShareLink(

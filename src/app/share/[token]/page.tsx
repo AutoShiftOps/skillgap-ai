@@ -8,6 +8,11 @@ function bandFor(score: number) {
   return { label: "Unicorn posting", color: "text-red-700 bg-red-100" };
 }
 
+function firstOrSelf<T>(value: T | T[] | null | undefined): T | undefined {
+  if (Array.isArray(value)) return value[0];
+  return value ?? undefined;
+}
+
 export default async function SharedResultPage({
   params
 }: {
@@ -22,7 +27,9 @@ export default async function SharedResultPage({
     rationale: string;
   };
   const band = bandFor(unicorn.score);
-  const jd = (result as any).job_descriptions;
+  const jd = firstOrSelf<{ title?: string; company?: string }>(
+    (result as Record<string, unknown>).job_descriptions as any
+  );
 
   return (
     <div className="space-y-6">
