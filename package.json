@@ -1,13 +1,14 @@
 {
   "name": "skillgap-ai",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "jest"
   },
   "dependencies": {
     "next": "14.2.5",
@@ -27,11 +28,14 @@
     "@types/react-dom": "18.3.0",
     "@types/pdf-parse": "1.1.4",
     "@types/uuid": "9.0.8",
+    "@types/jest": "29.5.12",
     "autoprefixer": "10.4.19",
     "postcss": "8.4.41",
     "tailwindcss": "3.4.9",
     "eslint": "8.57.0",
-    "eslint-config-next": "14.2.5"
+    "eslint-config-next": "14.2.5",
+    "jest": "29.7.0",
+    "ts-jest": "29.2.5"
   },
   "engines": {
     "node": ">=18.18.0"
