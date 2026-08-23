@@ -65,51 +65,89 @@ a completion note once its milestone deliverables were merged into `main`.
 **Goal:** Close gaps identified after the initial MVP that would block or risk a safe public
 deployment.
 
-- [x] `.eslintrc.json` extending `next/core-web-vitals` (previously missing; broke `npm run lint`
-      on a fresh clone).
-- [x] In-memory IP-based rate limiter (`src/lib/rateLimit.ts`) applied to all three AI-backed
-      routes, protecting shared OpenAI API costs on the public demo.
-- [x] `maxDuration = 60` exported from all AI-backed routes to reduce Vercel serverless timeout
-      risk across the multi-call OpenAI sequence.
-- [x] Safe JSON parsing with markdown-fence stripping and a typed `ModelResponseError` in
-      `src/lib/extraction.ts`, replacing unhandled exceptions on malformed model output.
-- [x] Jest test suite covering `computeMatchPercentages`, the rate limiter, and JD URL
-      fetch/HTML-stripping behavior.
-- [x] "Try a sample JD + resume" fixture and button, removing first-visit friction and doubling
-      as a manual QA fixture.
+- [x] `.eslintrc.json` extending `next/core-web-vitals`.
+- [x] In-memory IP-based rate limiter applied to all three AI-backed routes.
+- [x] `maxDuration = 60` exported from all AI-backed routes.
+- [x] Safe JSON parsing with markdown-fence stripping and a typed `ModelResponseError`.
+- [x] Jest test suite covering match percentages, rate limiting, and JD fetch behavior.
+- [x] "Try a sample JD + resume" fixture and button.
 - [x] `ErrorBoundary` component wrapping the upload form and results UI.
-- [x] Version bumped to `0.2.0`; `CHANGELOG.md` updated.
+- [x] Version bumped to `0.2.0`.
 
-**Known limitation carried forward:** the rate limiter is in-memory and per-instance — a
-best-effort deterrent, not a hard guarantee, until Phase 6 introduces persistent storage.
+## Phase 6 — Persistence & Multi-JD Tracking ✅ Closed
+
+**Goal:** Persist resumes, JDs, and analyses for signed-in users via Supabase/Postgres.
+
+- [x] `resumes`, `job_descriptions`, `analyses`, `shared_results` tables with `pgvector`
+      extension enabled for future embedding-based matching.
+- [x] Row Level Security policies restricting access to each user's own data, with a public
+      read exception for non-expired shared results.
+- [x] `src/lib/supabase/{client,server}.ts` — browser, server, and service-role clients.
+- [x] `src/lib/persistence.ts` — `saveAnalysis`, `getAnalysisHistory`, `createShareLink`,
+      `getSharedResult`.
+- [x] `/api/analyze` persists analyses for signed-in users, non-blocking for anonymous use.
+
+## Phase 7 — Authentication & Saved Profiles ✅ Closed
+
+**Goal:** Let a candidate sign in and have their analyses tied to their account.
+
+- [x] Supabase magic-link (email OTP) authentication.
+- [x] `src/middleware.ts` session refresh on every request.
+- [x] `/auth/callback` route exchanging the magic-link code for a session.
+- [x] `AuthWidget` header component (sign-in form ↔ signed-in state).
+
+## Phase 8 — Detector-Risk Feedback on Generated Text ✅ Closed
+
+**Goal:** Flag AI-writing-style risk in SkillGap AI's own generated cover letters, without
+building a general-purpose resume detector.
+
+- [x] `src/lib/detectorRisk.ts` — flags overused AI-writing phrases and uniform
+      sentence-length patterns.
+- [x] Applied only to generated cover letters via `/api/cover-letter`, never to the user's
+      actual resume.
+- [x] Risk badge + per-flag suggestions in `CoverLetterPanel`.
+- [x] Jest test coverage for low/medium/high risk scenarios.
+
+## Phase 9 — Mobile Experience (PWA) ✅ Closed
+
+**Goal:** Make the app installable and usable on mobile without a native rebuild.
+
+- [x] `public/manifest.json` PWA manifest.
+- [x] `public/sw.js` service worker (network-first, API routes excluded from caching).
+- [x] `ServiceWorkerRegister` component.
+
+**Deferred:** app icon PNG assets (`/icon-192.png`, `/icon-512.png`) not yet generated.
+
+## Phase 10 — Shareable "Unicorn Score" Links ✅ Closed
+
+**Goal:** Let signed-in users share a read-only view of their JD realism score for organic
+distribution.
+
+- [x] `shared_results` table with unique share tokens, view counts, optional expiry.
+- [x] `/api/share` route generating a share token for an owned analysis.
+- [x] Public `/share/[token]` page rendering the Unicorn Score and match summary.
+- [x] `ShareButton` component in the results UI.
+
+**Deferred:** aggregate, anonymized "Unicorn Index" cross-analysis trend content engine.
 
 ---
 
 ## Future phases (not yet started)
 
-### Phase 6 — Persistence & Multi-JD Tracking
-- Postgres + `pgvector` integration for storing parsed resumes and JDs.
-- Embedding-based semantic matching (replacing pure LLM-judgment gap analysis) for speed,
-  cost, and consistency at scale.
+### Phase 11 — Embedding-Based Semantic Matching
+- Wire the `embedding vector(1536)` columns (already in the schema) into the extraction
+  pipeline, replacing pure LLM-judgment gap analysis with a hybrid embedding + LLM approach
+  for speed, cost, and consistency at scale.
 - Durable rate limiting (Upstash Redis or Postgres-backed) replacing the in-memory limiter.
-- Job-application tracker: save multiple JD analyses per resume over time.
 
-### Phase 7 — Authentication & Saved Profiles
-- User accounts (NextAuth or Clerk) so a candidate can pre-upload one resume and run it
-  against many JDs without re-uploading.
-- Resume version history.
+### Phase 12 — Resume History & Multi-Resume Management UI
+- UI for viewing past analyses (`getAnalysisHistory` already implemented server-side).
+- Resume version history and switching between saved resumes for new analyses.
 
-### Phase 8 — Detector-Risk Feedback on Generated Text
-- Lightweight stylistic-risk heuristic applied only to SkillGap AI's own generated
-  suggestions/cover letters (not a general-purpose AI detector), warning users when a
-  suggested phrase resembles high-flag patterns identified in third-party detector research.
-
-### Phase 9 — Mobile Experience
-- React Native or PWA wrapper for on-the-go JD scanning (e.g., scanning a JD immediately
-  after a meetup conversation or LinkedIn scroll).
-
-### Phase 10 — Aggregate "Unicorn Index" Content Engine
+### Phase 13 — Aggregate "Unicorn Index" Content Engine
 - Publish aggregate, anonymized unicorn-score trends by role/industry as shareable content
   (LinkedIn posts, blog) — supports organic distribution without paid acquisition.
-- Shareable result links (e.g. "share my Unicorn Score") for organic distribution, without
-  requiring full Phase 7 auth.
+
+### Phase 14 — PWA Asset Polish & GitHub OAuth
+- Generate and add `/icon-192.png` and `/icon-512.png` app icons.
+- Add GitHub OAuth as a second sign-in option alongside magic-link email.

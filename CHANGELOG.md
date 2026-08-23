@@ -2,6 +2,31 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.3.0] - 2026-08-23
+
+### Added
+- **Persistence (Phase 6):** Supabase/Postgres integration — `resumes`, `job_descriptions`,
+  `analyses`, `shared_results` tables with Row Level Security and `pgvector` support.
+  `/api/analyze` now persists analyses for signed-in users (non-blocking for anonymous use).
+- **Auth (Phase 7):** Supabase magic-link email authentication, session-refresh middleware,
+  and an `AuthWidget` header component.
+- **Detector-risk heuristic (Phase 8):** `assessDetectorRisk()` flags overused AI-writing
+  phrases and uniform sentence-length patterns in SkillGap AI's own generated cover letters
+  only, surfaced via a risk badge in `CoverLetterPanel`.
+- **PWA support (Phase 9):** `manifest.json`, a network-first service worker (excluding API
+  routes from caching), and a `ServiceWorkerRegister` component.
+- **Shareable links (Phase 10):** `/api/share` + public `/share/[token]` page letting
+  signed-in users share a read-only Unicorn Score view; `ShareButton` component in the UI.
+- `@supabase/ssr` and `@supabase/supabase-js` dependencies.
+
+### Changed
+- Bumped version to `0.3.0`.
+- `.env.example` documents the new Supabase environment variables.
+
+### Notes
+- Anonymous (non-signed-in) use of the core analyze/cover-letter/interview-prep flow is fully
+  preserved — persistence and sharing are additive, not required.
+
 ## [0.2.0] - 2026-08-23
 
 ### Added
