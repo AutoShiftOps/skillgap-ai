@@ -4,8 +4,10 @@ import type { AnalysisResult } from "@/lib/types";
 import { analyzeRequest } from "@/lib/api";
 import { SAMPLE_JD_TEXT, SAMPLE_RESUME_TEXT } from "@/lib/sampleData";
 
+type ResultWithId = AnalysisResult & { analysisId: string | null };
+
 interface Props {
-  onResult: (result: AnalysisResult) => void;
+  onResult: (result: ResultWithId) => void;
 }
 
 export default function UploadForm({ onResult }: Props) {

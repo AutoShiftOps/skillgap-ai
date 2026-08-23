@@ -7,10 +7,13 @@ import GapTable from "@/components/GapTable";
 import CoverLetterPanel from "@/components/CoverLetterPanel";
 import InterviewPrepPanel from "@/components/InterviewPrepPanel";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import ShareButton from "@/components/ShareButton";
 import type { AnalysisResult } from "@/lib/types";
 
+type ResultWithId = AnalysisResult & { analysisId: string | null };
+
 export default function HomePage() {
-  const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [result, setResult] = useState<ResultWithId | null>(null);
 
   return (
     <div className="space-y-8">
@@ -40,6 +43,9 @@ export default function HomePage() {
                 technicalMatchPercentage={result.technicalMatchPercentage}
                 managerialMatchPercentage={result.managerialMatchPercentage}
               />
+            </div>
+            <div className="flex justify-end">
+              <ShareButton analysisId={result.analysisId} />
             </div>
             <GapTable gaps={result.gaps} />
             <div className="grid md:grid-cols-2 gap-6">

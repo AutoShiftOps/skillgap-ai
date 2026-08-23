@@ -1,10 +1,12 @@
 import type { AnalysisResult, InterviewQuestion, ParsedJD, ParsedResume, SkillGapItem } from "./types";
 
-export async function analyzeRequest(formData: FormData): Promise<AnalysisResult> {
+export async function analyzeRequest(
+  formData: FormData
+): Promise<AnalysisResult & { analysisId: string | null }> {
   const res = await fetch("/api/analyze", { method: "POST", body: formData });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || "Analysis failed.");
-  return data as AnalysisResult;
+  return data as AnalysisResult & { analysisId: string | null };
 }
 
 export async function coverLetterRequest(

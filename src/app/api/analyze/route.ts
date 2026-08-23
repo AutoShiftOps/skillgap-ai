@@ -9,6 +9,8 @@ import {
   computeMatchPercentages
 } from "@/lib/extraction";
 import { checkRateLimit, getClientIdentifier, pruneExpiredBuckets } from "@/lib/rateLimit";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { saveAnalysis } from "@/lib/persistence";
 import type { AnalysisResult } from "@/lib/types";
 
 export const maxDuration = 60;
@@ -93,9 +95,19 @@ export async function POST(req: NextRequest) {
       ...percentages
     };
 
-    return NextResponse.json(result, {
-      headers: { "X-RateLimit-Remaining": String(rateLimit.remaining) }
-    });
+    let analysisId: string | null = null;
+    try {
+      const supabase = createSupabaseServerClient();
+      const { data: userData } = await supabase.auth.getUser();
+      analysisId = await saveAnalysis(userData.user?.id ?? null, result);
+    } catch (persistErr) {
+      console.error("[/api/analyze] persistence error (non-blocking):", persistErr);
+    }
+
+    return NextResponse.json(
+      { ...result, analysisId },
+      { headers: { "X-RateLimit-Remaining": String(rateLimit.remaining) } }
+    );
   } catch (err: any) {
     console.error("[/api/analyze] error:", err);
     return NextResponse.json(

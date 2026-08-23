@@ -1,6 +1,6 @@
 {
   "name": "skillgap-ai",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -19,7 +19,9 @@
     "mammoth": "1.7.2",
     "zod": "3.23.8",
     "clsx": "2.1.1",
-    "uuid": "9.0.1"
+    "uuid": "9.0.1",
+    "@supabase/ssr": "0.5.1",
+    "@supabase/supabase-js": "2.45.4"
   },
   "devDependencies": {
     "typescript": "5.5.4",
