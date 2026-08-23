@@ -13,7 +13,7 @@ function Bar({ label, value }: { label: string; value: number }) {
     <div>
       <div className="flex justify-between text-sm mb-1">
         <span className="text-slate-600">{label}</span>
-        <span className="font-medium text-slate-900">{value}%</span>
+        <span className="font-medium text-ink-900">{value}%</span>
       </div>
       <div className="w-full bg-slate-100 rounded-full h-2">
         <div className={`h-2 rounded-full ${color}`} style={{ width: `${value}%` }} />

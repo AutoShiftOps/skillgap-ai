@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 html, body {
-  @apply bg-slate-50 text-slate-900;
+  @apply bg-[#faf8f5] text-ink-900;
 }
 
 .card {
@@ -11,11 +11,11 @@ html, body {
 }
 
 .btn-primary {
-  @apply bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-lg px-5 py-2.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply bg-ink-900 hover:bg-black text-white font-medium rounded-lg px-5 py-2.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
 }
 
 .btn-secondary {
-  @apply bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 font-medium rounded-lg px-5 py-2.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium rounded-lg px-5 py-2.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
 }
 
 .input-field {

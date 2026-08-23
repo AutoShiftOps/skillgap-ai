@@ -17,7 +17,7 @@ export default function UnicornScoreCard({ score }: { score: UnicornScore }) {
         <span className={`badge ${band.color}`}>{band.label}</span>
       </div>
       <div className="flex items-end gap-3 mb-2">
-        <span className="text-4xl font-bold text-slate-900">{score.score}</span>
+        <span className="text-4xl font-bold text-ink-900">{score.score}</span>
         <span className="text-slate-400 pb-1">/ 100</span>
       </div>
       <div className="w-full bg-slate-100 rounded-full h-2 mb-4">

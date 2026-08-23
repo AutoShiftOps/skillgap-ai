@@ -6,12 +6,18 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          50: "#eef2ff",
-          100: "#e0e7ff",
-          500: "#4f46e5",
-          600: "#4338ca",
-          700: "#3730a3"
+          50: "#fdf4ec",
+          100: "#fbe8d4",
+          500: "#c2632a",
+          600: "#a3521f",
+          700: "#7f3f18"
+        },
+        ink: {
+          900: "#141414"
         }
+      },
+      fontFamily: {
+        serif: ["Georgia", "Cambria", "serif"]
       }
     }
   },

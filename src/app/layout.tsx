@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description:
     "Paste any job description, upload your resume, and get a semantic skill-gap analysis, a JD realism (\"unicorn\") score, a tailored cover letter, and likely interview questions — without encouraging resume fabrication.",
   manifest: "/manifest.json",
-  themeColor: "#4338ca"
+  themeColor: "#141414"
 };
 
 export default function RootLayout({
@@ -21,10 +21,10 @@ export default function RootLayout({
       <body className="min-h-screen">
         <ServiceWorkerRegister />
         <header className="border-b border-slate-200 bg-white">
-          <div className="mx-auto max-w-5xl px-4 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-bold text-brand-600">SkillGap</span>
-              <span className="text-xl font-bold text-slate-900">AI</span>
+          <div className="mx-auto max-w-3xl px-4 py-4 flex items-center justify-between">
+            <div className="flex items-baseline gap-2">
+              <span className="text-lg font-serif font-bold text-ink-900">SkillGap AI</span>
+              <span className="hidden sm:inline text-xs text-slate-400">by AutoShiftOps</span>
             </div>
             <div className="flex items-center gap-4">
               <AuthWidget />
@@ -32,17 +32,26 @@ export default function RootLayout({
                 href="https://github.com/AutoShiftOps/skillgap-ai"
                 target="_blank"
                 rel="noreferrer"
-                className="text-sm text-slate-500 hover:text-brand-600"
+                className="text-xs text-slate-400 hover:text-ink-900"
               >
-                GitHub
+                Source
               </a>
             </div>
           </div>
         </header>
-        <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
-        <footer className="mx-auto max-w-5xl px-4 py-8 text-xs text-slate-400">
-          SkillGap AI is a decision-support tool. It never fabricates experience and
-          flags AI-authorship risk in its own suggestions. Built by AutoShiftOps.
+        <main className="mx-auto max-w-3xl px-4 py-10">{children}</main>
+        <footer className="mx-auto max-w-3xl px-4 py-8 text-xs text-slate-400 border-t border-slate-100 mt-4">
+          SkillGap AI never fabricates experience and flags AI-authorship risk in its own
+          generated text. Built in the open &mdash; see the{" "}
+          <a
+            href="https://github.com/AutoShiftOps/skillgap-ai"
+            target="_blank"
+            rel="noreferrer"
+            className="underline hover:text-ink-900"
+          >
+            source and roadmap
+          </a>
+          .
         </footer>
       </body>
     </html>
