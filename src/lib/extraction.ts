@@ -15,6 +15,33 @@ import type {
   InterviewQuestion
 } from "./types";
 
+export class ModelResponseError extends Error {
+  constructor(message: string, public raw?: string) {
+    super(message);
+    this.name = "ModelResponseError";
+  }
+}
+
+function safeJSONParse<T>(content: string): T {
+  try {
+    return JSON.parse(content) as T;
+  } catch {
+    const stripped = content
+      .trim()
+      .replace(/^```(?:json)?/i, "")
+      .replace(/```$/, "")
+      .trim();
+    try {
+      return JSON.parse(stripped) as T;
+    } catch (err) {
+      throw new ModelResponseError(
+        "The AI model returned a response that could not be parsed. Please try again.",
+        content
+      );
+    }
+  }
+}
+
 async function chatJSON<T>(system: string, user: string): Promise<T> {
   const client = getOpenAIClient();
   const completion = await client.chat.completions.create({
@@ -28,8 +55,10 @@ async function chatJSON<T>(system: string, user: string): Promise<T> {
   });
 
   const content = completion.choices[0]?.message?.content;
-  if (!content) throw new Error("Empty response from model.");
-  return JSON.parse(content) as T;
+  if (!content) {
+    throw new ModelResponseError("Empty response from model. Please try again.");
+  }
+  return safeJSONParse<T>(content);
 }
 
 export async function extractJD(rawText: string): Promise<ParsedJD> {
