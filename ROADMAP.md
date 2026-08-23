@@ -9,7 +9,7 @@ a completion note once its milestone deliverables were merged into `main`.
 **Goal:** Validate the core hypothesis before writing product code.
 
 - [x] Validate "hybrid unicorn JD" pattern and AI-resume-inflation dynamic against external
-      sources (SHRM-cited detection-adoption stats, ATS detector accuracy studies, competitor
+      sources (AI-detection adoption stats, ATS detector accuracy studies, competitor
       landscape scan of Jobscan/Teal/JobFix/Seekario/InstaApply).
 - [x] Identify product wedge: JD-realism scoring + semantic gap mapping + strict
       anti-fabrication stance, distinct from existing keyword-matching tools.
@@ -60,30 +60,56 @@ a completion note once its milestone deliverables were merged into `main`.
 - [x] GitHub Issues created for all five phases, each closed with a completion comment,
       preserving build history.
 
+## Phase 5 — Production Hardening ✅ Closed
+
+**Goal:** Close gaps identified after the initial MVP that would block or risk a safe public
+deployment.
+
+- [x] `.eslintrc.json` extending `next/core-web-vitals` (previously missing; broke `npm run lint`
+      on a fresh clone).
+- [x] In-memory IP-based rate limiter (`src/lib/rateLimit.ts`) applied to all three AI-backed
+      routes, protecting shared OpenAI API costs on the public demo.
+- [x] `maxDuration = 60` exported from all AI-backed routes to reduce Vercel serverless timeout
+      risk across the multi-call OpenAI sequence.
+- [x] Safe JSON parsing with markdown-fence stripping and a typed `ModelResponseError` in
+      `src/lib/extraction.ts`, replacing unhandled exceptions on malformed model output.
+- [x] Jest test suite covering `computeMatchPercentages`, the rate limiter, and JD URL
+      fetch/HTML-stripping behavior.
+- [x] "Try a sample JD + resume" fixture and button, removing first-visit friction and doubling
+      as a manual QA fixture.
+- [x] `ErrorBoundary` component wrapping the upload form and results UI.
+- [x] Version bumped to `0.2.0`; `CHANGELOG.md` updated.
+
+**Known limitation carried forward:** the rate limiter is in-memory and per-instance — a
+best-effort deterrent, not a hard guarantee, until Phase 6 introduces persistent storage.
+
 ---
 
 ## Future phases (not yet started)
 
-### Phase 5 — Persistence & Multi-JD Tracking
+### Phase 6 — Persistence & Multi-JD Tracking
 - Postgres + `pgvector` integration for storing parsed resumes and JDs.
 - Embedding-based semantic matching (replacing pure LLM-judgment gap analysis) for speed,
   cost, and consistency at scale.
+- Durable rate limiting (Upstash Redis or Postgres-backed) replacing the in-memory limiter.
 - Job-application tracker: save multiple JD analyses per resume over time.
 
-### Phase 6 — Authentication & Saved Profiles
+### Phase 7 — Authentication & Saved Profiles
 - User accounts (NextAuth or Clerk) so a candidate can pre-upload one resume and run it
   against many JDs without re-uploading.
 - Resume version history.
 
-### Phase 7 — Detector-Risk Feedback on Generated Text
+### Phase 8 — Detector-Risk Feedback on Generated Text
 - Lightweight stylistic-risk heuristic applied only to SkillGap AI's own generated
   suggestions/cover letters (not a general-purpose AI detector), warning users when a
   suggested phrase resembles high-flag patterns identified in third-party detector research.
 
-### Phase 8 — Mobile Experience
+### Phase 9 — Mobile Experience
 - React Native or PWA wrapper for on-the-go JD scanning (e.g., scanning a JD immediately
   after a meetup conversation or LinkedIn scroll).
 
-### Phase 9 — Aggregate "Unicorn Index" Content Engine
+### Phase 10 — Aggregate "Unicorn Index" Content Engine
 - Publish aggregate, anonymized unicorn-score trends by role/industry as shareable content
   (LinkedIn posts, blog) — supports organic distribution without paid acquisition.
+- Shareable result links (e.g. "share my Unicorn Score") for organic distribution, without
+  requiring full Phase 7 auth.
