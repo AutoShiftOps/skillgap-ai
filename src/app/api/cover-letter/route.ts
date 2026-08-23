@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateCoverLetter } from "@/lib/extraction";
 import { checkRateLimit, getClientIdentifier, pruneExpiredBuckets } from "@/lib/rateLimit";
+import { assessDetectorRisk } from "@/lib/detectorRisk";
 import type { ParsedJD, ParsedResume } from "@/lib/types";
 
 export const maxDuration = 60;
@@ -33,7 +34,8 @@ export async function POST(req: NextRequest) {
     }
 
     const coverLetter = await generateCoverLetter(jd, resume);
-    return NextResponse.json({ coverLetter });
+    const detectorRisk = assessDetectorRisk(coverLetter);
+    return NextResponse.json({ coverLetter, detectorRisk });
   } catch (err: any) {
     console.error("[/api/cover-letter] error:", err);
     return NextResponse.json(
