@@ -2,6 +2,30 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.2.0] - 2026-08-23
+
+### Added
+- In-memory IP-based rate limiter (`src/lib/rateLimit.ts`) applied to all three
+  AI-backed API routes (`/api/analyze`, `/api/cover-letter`, `/api/interview-questions`)
+  to protect shared OpenAI API costs on the public demo deployment.
+- `maxDuration = 60` exported from all AI-backed routes to extend the Vercel
+  serverless function timeout beyond the 10s Hobby-plan default (requires Pro
+  plan to take effect above 10s; see DEPLOYMENT.md).
+- Safe JSON parsing with markdown-fence stripping and a typed `ModelResponseError`
+  in `src/lib/extraction.ts`, so a malformed model response surfaces a clear,
+  user-facing error instead of an unhandled exception.
+- Jest test suite (`jest.config.js` + 3 test files) covering `computeMatchPercentages`,
+  the rate limiter, and JD URL fetch/HTML-stripping behavior.
+- `.eslintrc.json` extending `next/core-web-vitals` (previously missing, which broke
+  `npm run lint` on a fresh clone).
+- "Try a sample JD + resume" button and fixture data (`src/lib/sampleData.ts`),
+  letting a first-time visitor see the full flow without pasting a real resume.
+- `ErrorBoundary` component wrapping the upload form and results UI, so a render-time
+  exception shows a recoverable error card instead of blanking the page.
+
+### Changed
+- Bumped version to `0.2.0` to reflect the hardening pass beyond the initial MVP.
+
 ## [0.1.0] - 2026-08-23
 
 ### Added
