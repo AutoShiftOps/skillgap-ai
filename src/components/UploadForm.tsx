@@ -2,6 +2,7 @@
 import { useState, FormEvent } from "react";
 import type { AnalysisResult } from "@/lib/types";
 import { analyzeRequest } from "@/lib/api";
+import { SAMPLE_JD_TEXT, SAMPLE_RESUME_TEXT } from "@/lib/sampleData";
 
 interface Props {
   onResult: (result: AnalysisResult) => void;
@@ -16,24 +17,10 @@ export default function UploadForm({ onResult }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
+  async function runAnalysis(formData: FormData) {
     setLoading(true);
     setError(null);
-
     try {
-      const formData = new FormData();
-      if (jdMode === "url") {
-        formData.append("jdUrl", jdUrl);
-      } else {
-        formData.append("jdText", jdText);
-      }
-      if (resumeFile) {
-        formData.append("resumeFile", resumeFile);
-      } else {
-        formData.append("resumeText", resumeText);
-      }
-
       const result = await analyzeRequest(formData);
       onResult(result);
     } catch (e: any) {
@@ -43,8 +30,50 @@ export default function UploadForm({ onResult }: Props) {
     }
   }
 
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    const formData = new FormData();
+    if (jdMode === "url") {
+      formData.append("jdUrl", jdUrl);
+    } else {
+      formData.append("jdText", jdText);
+    }
+    if (resumeFile) {
+      formData.append("resumeFile", resumeFile);
+    } else {
+      formData.append("resumeText", resumeText);
+    }
+    await runAnalysis(formData);
+  }
+
+  async function handleTrySample() {
+    setJdMode("text");
+    setJdText(SAMPLE_JD_TEXT);
+    setResumeText(SAMPLE_RESUME_TEXT);
+    setResumeFile(null);
+
+    const formData = new FormData();
+    formData.append("jdText", SAMPLE_JD_TEXT);
+    formData.append("resumeText", SAMPLE_RESUME_TEXT);
+    await runAnalysis(formData);
+  }
+
   return (
     <form onSubmit={handleSubmit} className="card space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-medium text-slate-500">
+          Paste a real JD + resume, or try an example first
+        </h2>
+        <button
+          type="button"
+          onClick={handleTrySample}
+          disabled={loading}
+          className="text-sm text-brand-600 hover:text-brand-700 font-medium underline disabled:opacity-50"
+        >
+          Try a sample JD + resume
+        </button>
+      </div>
+
       <div>
         <div className="flex items-center gap-2 mb-2">
           <h3 className="font-semibold text-lg">1. Job Description</h3>
@@ -104,7 +133,11 @@ export default function UploadForm({ onResult }: Props) {
         />
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && (
+        <p className="text-sm text-red-600" role="alert">
+          {error}
+        </p>
+      )}
 
       <button type="submit" className="btn-primary w-full" disabled={loading}>
         {loading ? "Analyzing…" : "Analyze gap"}

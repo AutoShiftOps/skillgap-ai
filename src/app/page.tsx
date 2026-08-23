@@ -6,6 +6,7 @@ import MatchSummary from "@/components/MatchSummary";
 import GapTable from "@/components/GapTable";
 import CoverLetterPanel from "@/components/CoverLetterPanel";
 import InterviewPrepPanel from "@/components/InterviewPrepPanel";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import type { AnalysisResult } from "@/lib/types";
 
 export default function HomePage() {
@@ -25,24 +26,28 @@ export default function HomePage() {
         </p>
       </section>
 
-      <UploadForm onResult={setResult} />
+      <ErrorBoundary>
+        <UploadForm onResult={setResult} />
+      </ErrorBoundary>
 
       {result && (
-        <div className="space-y-6">
-          <div className="grid md:grid-cols-2 gap-6">
-            <UnicornScoreCard score={result.unicornScore} />
-            <MatchSummary
-              matchPercentage={result.matchPercentage}
-              technicalMatchPercentage={result.technicalMatchPercentage}
-              managerialMatchPercentage={result.managerialMatchPercentage}
-            />
+        <ErrorBoundary>
+          <div className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              <UnicornScoreCard score={result.unicornScore} />
+              <MatchSummary
+                matchPercentage={result.matchPercentage}
+                technicalMatchPercentage={result.technicalMatchPercentage}
+                managerialMatchPercentage={result.managerialMatchPercentage}
+              />
+            </div>
+            <GapTable gaps={result.gaps} />
+            <div className="grid md:grid-cols-2 gap-6">
+              <CoverLetterPanel jd={result.jd} resume={result.resume} />
+              <InterviewPrepPanel jd={result.jd} resume={result.resume} gaps={result.gaps} />
+            </div>
           </div>
-          <GapTable gaps={result.gaps} />
-          <div className="grid md:grid-cols-2 gap-6">
-            <CoverLetterPanel jd={result.jd} resume={result.resume} />
-            <InterviewPrepPanel jd={result.jd} resume={result.resume} gaps={result.gaps} />
-          </div>
-        </div>
+        </ErrorBoundary>
       )}
     </div>
   );
