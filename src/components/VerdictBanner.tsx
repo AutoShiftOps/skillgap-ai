@@ -32,7 +32,7 @@ export default function VerdictBanner({ score }: { score: UnicornScore }) {
 
   return (
     <div className="rounded-2xl bg-ink-900 text-white p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6">
-      <RadialScoreGauge score={score.score} />
+      <RadialScoreGauge score={score.score} variant="dark" />
       <div className="text-center sm:text-left">
         <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">
           The verdict
