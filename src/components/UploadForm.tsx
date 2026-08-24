@@ -3,6 +3,7 @@ import { useState, FormEvent } from "react";
 import type { AnalysisResult } from "@/lib/types";
 import { analyzeRequest } from "@/lib/api";
 import { SAMPLE_JD_TEXT, SAMPLE_RESUME_TEXT } from "@/lib/sampleData";
+import AnalyzingProgress from "./AnalyzingProgress";
 
 type ResultWithId = AnalysisResult & { analysisId: string | null };
 
@@ -83,14 +84,14 @@ export default function UploadForm({ onResult }: Props) {
             <button
               type="button"
               onClick={() => setJdMode("url")}
-              className={`px-3 py-1 rounded-full ${jdMode === "url" ? "bg-brand-600 text-white" : "bg-slate-100 text-slate-600"}`}
+              className={`px-3 py-1 rounded-full ${jdMode === "url" ? "bg-ink-900 text-white" : "bg-slate-100 text-slate-600"}`}
             >
               Paste URL
             </button>
             <button
               type="button"
               onClick={() => setJdMode("text")}
-              className={`px-3 py-1 rounded-full ${jdMode === "text" ? "bg-brand-600 text-white" : "bg-slate-100 text-slate-600"}`}
+              className={`px-3 py-1 rounded-full ${jdMode === "text" ? "bg-ink-900 text-white" : "bg-slate-100 text-slate-600"}`}
             >
               Paste text
             </button>
@@ -141,9 +142,13 @@ export default function UploadForm({ onResult }: Props) {
         </p>
       )}
 
-      <button type="submit" className="btn-primary w-full" disabled={loading}>
-        {loading ? "Analyzing…" : "Analyze gap"}
-      </button>
+      {loading ? (
+        <AnalyzingProgress />
+      ) : (
+        <button type="submit" className="btn-primary w-full">
+          Analyze gap
+        </button>
+      )}
     </form>
   );
 }

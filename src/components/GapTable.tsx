@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import type { SkillGapItem } from "@/lib/types";
 
 const statusStyles: Record<string, string> = {
@@ -15,14 +16,39 @@ const categoryLabels: Record<string, string> = {
 };
 
 export default function GapTable({ gaps }: { gaps: SkillGapItem[] }) {
+  const [expanded, setExpanded] = useState(false);
+
   const ordered = [...gaps].sort((a, b) => {
     const rank = { missing: 0, partial: 1, match: 2 } as Record<string, number>;
     return rank[a.status] - rank[b.status];
   });
 
+  const counts = ordered.reduce(
+    (acc, g) => {
+      acc[g.status] = (acc[g.status] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
+
+  const visibleRows = expanded ? ordered : ordered.slice(0, 4);
+
   return (
     <div className="card">
-      <h3 className="font-semibold text-lg mb-4">Skill-by-Skill Gap Analysis</h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-semibold text-lg">Skill-by-Skill Gap Analysis</h3>
+        <div className="flex gap-2">
+          {counts.missing > 0 && (
+            <span className="badge bg-red-100 text-red-700">{counts.missing} missing</span>
+          )}
+          {counts.partial > 0 && (
+            <span className="badge bg-amber-100 text-amber-700">{counts.partial} partial</span>
+          )}
+          {counts.match > 0 && (
+            <span className="badge bg-emerald-100 text-emerald-700">{counts.match} match</span>
+          )}
+        </div>
+      </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -34,7 +60,7 @@ export default function GapTable({ gaps }: { gaps: SkillGapItem[] }) {
             </tr>
           </thead>
           <tbody>
-            {ordered.map((g, i) => (
+            {visibleRows.map((g, i) => (
               <tr key={`${g.skill}-${i}`} className="border-b border-slate-50 align-top">
                 <td className="py-2.5 pr-4 font-medium text-slate-800">{g.skill}</td>
                 <td className="py-2.5 pr-4 text-slate-500">{categoryLabels[g.category] || g.category}</td>
@@ -49,6 +75,14 @@ export default function GapTable({ gaps }: { gaps: SkillGapItem[] }) {
           </tbody>
         </table>
       </div>
+      {ordered.length > 4 && (
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="mt-3 text-sm text-brand-600 hover:text-brand-700 font-medium"
+        >
+          {expanded ? "Show fewer" : `Show all ${ordered.length} skills`}
+        </button>
+      )}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import UploadForm from "@/components/UploadForm";
-import UnicornScoreCard from "@/components/UnicornScoreCard";
+import VerdictBanner from "@/components/VerdictBanner";
 import MatchSummary from "@/components/MatchSummary";
 import GapTable from "@/components/GapTable";
 import CoverLetterPanel from "@/components/CoverLetterPanel";
@@ -10,6 +10,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import ShareButton from "@/components/ShareButton";
 import ExamplePreview from "@/components/ExamplePreview";
 import TrustSection from "@/components/TrustSection";
+import StaggerReveal from "@/components/StaggerReveal";
 import type { AnalysisResult } from "@/lib/types";
 
 type ResultWithId = AnalysisResult & { analysisId: string | null };
@@ -44,22 +45,34 @@ export default function HomePage() {
       {result && (
         <ErrorBoundary>
           <div className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              <UnicornScoreCard score={result.unicornScore} />
+            <StaggerReveal>
+              <VerdictBanner score={result.unicornScore} />
+            </StaggerReveal>
+
+            <StaggerReveal delayMs={150}>
               <MatchSummary
                 matchPercentage={result.matchPercentage}
                 technicalMatchPercentage={result.technicalMatchPercentage}
                 managerialMatchPercentage={result.managerialMatchPercentage}
               />
-            </div>
-            <div className="flex justify-end">
-              <ShareButton analysisId={result.analysisId} />
-            </div>
-            <GapTable gaps={result.gaps} />
-            <div className="grid md:grid-cols-2 gap-6">
-              <CoverLetterPanel jd={result.jd} resume={result.resume} />
-              <InterviewPrepPanel jd={result.jd} resume={result.resume} gaps={result.gaps} />
-            </div>
+            </StaggerReveal>
+
+            <StaggerReveal delayMs={250}>
+              <div className="flex justify-end">
+                <ShareButton analysisId={result.analysisId} />
+              </div>
+            </StaggerReveal>
+
+            <StaggerReveal delayMs={350}>
+              <GapTable gaps={result.gaps} />
+            </StaggerReveal>
+
+            <StaggerReveal delayMs={500}>
+              <div className="grid md:grid-cols-2 gap-6">
+                <CoverLetterPanel jd={result.jd} resume={result.resume} />
+                <InterviewPrepPanel jd={result.jd} resume={result.resume} gaps={result.gaps} />
+              </div>
+            </StaggerReveal>
           </div>
         </ErrorBoundary>
       )}
